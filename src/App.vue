@@ -20,6 +20,7 @@
           :player=p
           :fighting=fighting
           :currentPlayer="player"
+          :dead=dead
           @updateBoss="updateBoss"
           @start="newPlayer"
           @kill="killPlayer"
@@ -33,6 +34,7 @@
 </template>
 
 <script>
+import store from 'store';
 import Boss from './components/Boss.vue';
 import Player from './components/Player.vue';
 
@@ -41,6 +43,10 @@ export default {
   components: {
     Boss,
     Player,
+  },
+  mounted() {
+    if (store.get('s3-fight')) this.fighting = store.get('s3-fight');
+    if (store.get('s3-dead')) this.dead = store.get('s3-dead');
   },
   data() {
     return {
@@ -96,11 +102,15 @@ export default {
   },
   methods: {
     updateBoss(n) {
-      if (this.boss + n >= 0 && this.boss + n < 12) this.fighting[this.player] += n;
+      if (this.boss + n >= 0 && this.boss + n < 12) {
+        this.fighting[this.player] += n;
+        store.set('s3-fight', this.fighting);
+      }
     },
     newPlayer(p) {
       this.player = p;
       if (this.fighting[p] === undefined) this.$set(this.fighting, p, 0);
+      store.set('s3-fight', this.fighting);
     },
     killPlayer() {
       // Save death data
@@ -112,8 +122,12 @@ export default {
       for (let p in this.fighting) { // eslint-disable-line
         if (p === this.player) {
           this.$delete(this.fighting, p);
+          this.player = null;
         }
       }
+
+      store.set('s3-dead', this.dead);
+      store.set('s3-fight', this.fighting);
     },
   },
 };
@@ -153,6 +167,7 @@ h2 {
 }
 
 .challengers {
+  background: linear-gradient(to top, darken(#334, 25%), transparent);
   padding: 0 50px;
   position: absolute;
   bottom: -30px; left: 0;

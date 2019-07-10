@@ -9,6 +9,7 @@
     </section>
 
     <div v-show="isActive" class="label">{{boss.id}}</div>
+    <img src="../assets/crown.png" class="crown">
     <img v-if="level === 1" src="../assets/boss/1.jpg">
     <img v-if="level === 2" src="../assets/boss/2.png">
     <img v-if="level === 3" src="../assets/boss/3.png">
@@ -43,7 +44,10 @@ export default {
       return (this.currentBoss + 1 > this.level);
     },
     isActive() {
-      return (this.currentBoss !== null && this.currentBoss + 1 === this.level);
+      return (
+        (this.currentBoss !== null && this.currentBoss + 1 === this.level)
+        || !this.player
+      );
     },
     killed() {
       return this.dead.filter(d => d.boss + 1 === this.level);
@@ -78,17 +82,23 @@ export default {
   width: calc(100% / 12);
   z-index: 1;
 
-  &:not(:last-of-type):after {
-    background: white;
-    content: '';
-    height: 5px;
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 100%;
-    z-index: 0;
+  &:last-of-type img:not(.crown) { border-color: #ffc93a; }
+
+  &:not(:last-of-type) {
+    &:after {
+      background: white;
+      content: '';
+      height: 5px;
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 100%;
+      z-index: 0;
+    }
+
+    .crown { display: none; }
   }
 
-  img {
+  img:not(.crown) {
     border: 5px solid white;
     border-radius: 100%;
     display: block;
@@ -99,6 +109,14 @@ export default {
     transition: transform 0.3s, filter 0.3s;
     width: 100%;
     z-index: 1;
+  }
+
+  .crown {
+    position: absolute;
+    bottom: 82%; left: 50%;
+    transform: rotate(10deg);
+    width: 32px;
+    z-index: 2;
   }
 
   &:not(.active) {
@@ -121,7 +139,6 @@ export default {
   }
 
   .label {
-    background: rgba(0, 0, 0, 0.4);
     border-radius: 4px;
     color: white;
     font-weight: bold;

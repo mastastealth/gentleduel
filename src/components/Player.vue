@@ -2,6 +2,7 @@
   <div
     class="player"
     :class="{ 'active':isActive, 'dead':isDead, 'pause':isWaiting }"
+    :data-id="player"
     :style="style"
   >
     <div
@@ -28,7 +29,7 @@
 <script>
 export default {
   name: 'Player',
-  props: ['player', 'fighting', 'currentPlayer'],
+  props: ['player', 'fighting', 'currentPlayer', 'dead'],
   data() {
     return {
       life: 3,
@@ -42,7 +43,7 @@ export default {
       return this.fighting[this.player];
     },
     isDead() {
-      return this.life === 0;
+      return this.life === 0 || this.dead.some(d => d.id === this.player.toLowerCase());
     },
     isActive() {
       return this.currentPlayer === this.player && this.life !== 0;
@@ -71,8 +72,30 @@ export default {
   text-align: center;
   transition: transform 0.4s;
 
+  &:before {
+    content: '';
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+
   &:hover {
-    .avatar { border-color: white; filter: none; }
+    .avatar {
+      border-color: white;
+      filter: none;
+    }
+
+    &:not(.active):not(.dead):not(.pause):before {
+      color: white;
+      content: attr(data-id);
+      font-weight: bold;
+      opacity: 1;
+      position: absolute;
+      bottom: 130%; left: 0;
+      text-align: center;
+      transform: none;
+      width: 100%;
+    }
   }
 
   &.active {
