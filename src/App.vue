@@ -192,8 +192,8 @@ html, body {
   width: 32px;
   z-index: 5;
 
-  &:hover { 
-    opacity: 1; 
+  &:hover {
+    opacity: 1;
 
     &:before {
       background: red;

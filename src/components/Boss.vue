@@ -24,7 +24,7 @@
     <img v-if="level === 12" src="../assets/boss/12.png">
 
     <section class="kills">
-      <div v-for="(l, i) in killed" :key="i" 
+      <div v-for="(l, i) in killed" :key="i"
         class="loser avatar"
         :data-survive="survivors.includes(l.id)"
         :data-id="l.id.toLowerCase()"
