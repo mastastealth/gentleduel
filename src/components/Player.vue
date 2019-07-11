@@ -30,6 +30,11 @@
 export default {
   name: 'Player',
   props: ['player', 'fighting', 'currentPlayer', 'dead'],
+  mounted() {
+    this.$root.$on('survive', (id) => {
+      if (id === this.player) this.life = 1;
+    });
+  },
   data() {
     return {
       life: 3,
@@ -100,10 +105,10 @@ export default {
 
   &.active {
     position: absolute;
-    top: -32vh; left: 50px;
+    top: -42vh; left: 50px;
     width: calc((100vw - 100px) / 12);
 
-    &:before {
+    &:after {
       background: url('../assets/swords.png') no-repeat;
       background-size: 100% 100%;
       content: '';

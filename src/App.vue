@@ -1,8 +1,9 @@
 <template>
   <div id="app">
-    <section class="bosses">
-      <h2>The Bosses</h2>
+    <span class="trash" @dblclick="nuke"></span>
 
+    <section class="bosses">
+      <!-- <h2>The Bosses</h2> -->
       <Boss v-for="(b, i) in bosses"
         :key="i"
         :boss="b"
@@ -11,7 +12,10 @@
         :dead=dead
         :fighting=fighting
         :player=player
+        :survivors=survivors
         @start="newPlayer"
+        @survive="toggleSurvival"
+        @resurrect="unkillPlayer"
       />
 
       <section class="challengers">
@@ -27,8 +31,9 @@
         />
       </section>
     </section>
+
     <section class="underworld">
-      <h2>The Underworld</h2>
+      UNDERWORLD
     </section>
   </div>
 </template>
@@ -90,9 +95,11 @@ export default {
         'Haru',
         'Pile',
         'Split',
+        'Spider',
       ],
       dead: [],
       fighting: {},
+      survivors: [],
     };
   },
   computed: {
@@ -115,7 +122,7 @@ export default {
     killPlayer() {
       // Save death data
       this.dead.push({
-        id: this.player.toLowerCase(),
+        id: this.player,
         boss: this.boss,
       });
 
@@ -128,6 +135,28 @@ export default {
 
       store.set('s3-dead', this.dead);
       store.set('s3-fight', this.fighting);
+    },
+    toggleSurvival(id) {
+      if (this.survivors.includes(id)) {
+        this.survivors = this.survivors.filter(s => s !== id);
+      } else {
+        this.survivors.push(id);
+      }
+    },
+    unkillPlayer(p) {
+      this.dead = this.dead.filter(d => d.id !== p);
+      this.$set(this.fighting, p, 10);
+      this.$root.$emit('survive', p);
+
+      store.set('s3-dead', this.dead);
+      store.set('s3-fight', this.fighting);
+    },
+    nuke() {
+      store.remove('s3-dead');
+      store.remove('s3-fight');
+      this.dead = [];
+      this.fighting = {};
+      this.survivors = [];
     },
   },
 };
@@ -151,6 +180,32 @@ html, body {
   width: 100vw;
 }
 
+.trash {
+  background: url("./assets/trash.png") no-repeat;
+  background-size: 100% auto;
+  cursor: pointer;
+  height: 32px;
+  opacity: 0.5;
+  position: fixed;
+  top: 5px;
+  right: 5px;
+  width: 32px;
+  z-index: 5;
+
+  &:hover { 
+    opacity: 1; 
+
+    &:before {
+      background: red;
+      color: white;
+      content: 'DANGER';
+      padding: 8px;
+      position: absolute;
+      top: 0; right: 100%;
+    }
+  }
+}
+
 h2 {
   color: white;
   position: absolute;
@@ -159,6 +214,7 @@ h2 {
 
 .bosses {
   align-items: center;
+  background: linear-gradient(to top, darken(#334, 10%) 45%, transparent 50%);
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
@@ -177,10 +233,16 @@ h2 {
 }
 
 .underworld {
-  background: darken(#334, 10%);
-  height: 20vh;
-  position: relative;
-  z-index: 3;
+  align-items: center;
+  color: #334;
+  display: flex;
+  font-size: 5em;
+  font-weight: bold;
+  height: 50vh;
+  justify-content: center;
+  position: fixed;
+  bottom: 0; left: 0;
+  width: 100vw;
 }
 
 .avatar {
@@ -207,6 +269,7 @@ h2 {
   &[data-id="qq"] { background: url('./assets/player/QQ.png') no-repeat; }
   &[data-id="shadow31"] { background: url('./assets/player/Shadow31.png') no-repeat; }
   &[data-id="skeletn"] { background: url('./assets/player/SkeletN.png') no-repeat; }
+  &[data-id="spider"] { background: url('./assets/player/Spider.png') no-repeat; }
   &[data-id="split"] { background: url('./assets/player/Split.png') no-repeat; }
   &[data-id="thisguy"] { background: url('./assets/player/ThisGuy.png') no-repeat; }
   &[data-id="ziggy"] { background: url('./assets/player/Ziggy.png') no-repeat; }

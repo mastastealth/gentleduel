@@ -24,7 +24,13 @@
     <img v-if="level === 12" src="../assets/boss/12.png">
 
     <section class="kills">
-      <div v-for="(l, i) in killed" :key="i" class="loser avatar" :data-id="l.id"></div>
+      <div v-for="(l, i) in killed" :key="i" 
+        class="loser avatar"
+        :data-survive="survivors.includes(l.id)"
+        :data-id="l.id.toLowerCase()"
+        @click="$emit('survive', l.id)"
+        @dblclick="$emit('resurrect', l.id)"
+      ></div>
     </section>
   </div>
 </template>
@@ -32,7 +38,7 @@
 <script>
 export default {
   name: 'Boss',
-  props: ['boss', 'currentBoss', 'level', 'dead', 'fighting', 'player'],
+  props: ['boss', 'currentBoss', 'level', 'dead', 'fighting', 'player', 'survivors'],
   data() {
     return {
       active: false,
@@ -151,23 +157,21 @@ export default {
 
   .waiting {
     position: absolute;
-    bottom: 130%; left: 0;
+    bottom: 150%; left: 0;
     text-align: center;
     width: 100%;
 
-    .avatar {
-      cursor: pointer;
-
-      &:hover { transform: scale(1.2); }
-    }
+    .avatar:hover { transform: scale(1.2); }
   }
 
   .avatar {
     border: 2px solid white;
     border-radius: 100%;
+    cursor: pointer;
     display: inline-block;
-    height: 32px;
-    width: 32px;
+    height: 48px;
+    transition: filter 0.3s, transform 0.3s;
+    width: 48px;
   }
 
   .kills {
@@ -180,6 +184,12 @@ export default {
       border: 3px solid black;
       filter: brightness(90%) grayscale(70%);
       transform: rotate(180deg);
+
+      &[data-survive] {
+        border: 3px solid darkred;
+        filter: grayscale(30%);
+        transform: none;
+      }
     }
   }
 }
