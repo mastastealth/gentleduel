@@ -58,6 +58,7 @@ export default {
     this.req.onreadystatechange = () => {
       if (this.req.readyState === XMLHttpRequest.DONE) {
         const json = JSON.parse(this.req.responseText);
+        console.log(this.req.responseText); // eslint-disable-line
 
         if (!this.done) {
           this.dead = json.dead || [];
