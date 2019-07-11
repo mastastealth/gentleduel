@@ -1,5 +1,7 @@
 # gentleduel
 
+An interface to showcase the Tooth and Tail Duels Tournament on a stream. 
+
 ## Project setup
 ```
 yarn install
