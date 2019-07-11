@@ -52,9 +52,28 @@ export default {
   mounted() {
     if (store.get('s3-fight')) this.fighting = store.get('s3-fight');
     if (store.get('s3-dead')) this.dead = store.get('s3-dead');
+
+    this.req = new XMLHttpRequest();
+
+    this.req.onreadystatechange = () => {
+      if (this.req.readyState === XMLHttpRequest.DONE) {
+        const json = JSON.parse(this.req.responseText);
+
+        if (!this.done) {
+          this.dead = json.dead || [];
+          this.fighting = json.fighting || {};
+          this.done = true;
+        }
+      }
+    };
+
+    this.req.open('GET', `https://api.jsonbin.io/b/${process.env.VUE_APP_BIN}/latest`, true);
+    this.req.setRequestHeader('secret-key', `${process.env.VUE_APP_KEY}`);
+    this.req.send();
   },
   data() {
     return {
+      req: null,
       player: null,
       bosses: [
         { id: 'Pingu' },
@@ -100,6 +119,7 @@ export default {
       dead: [],
       fighting: {},
       survivors: [],
+      done: false,
     };
   },
   computed: {
@@ -112,12 +132,14 @@ export default {
       if (this.boss + n >= 0 && this.boss + n < 12) {
         this.fighting[this.player] += n;
         store.set('s3-fight', this.fighting);
+        this.setJSON();
       }
     },
     newPlayer(p) {
       this.player = p;
       if (this.fighting[p] === undefined) this.$set(this.fighting, p, 0);
       store.set('s3-fight', this.fighting);
+      this.setJSON();
     },
     killPlayer() {
       // Save death data
@@ -135,6 +157,7 @@ export default {
 
       store.set('s3-dead', this.dead);
       store.set('s3-fight', this.fighting);
+      this.setJSON();
     },
     toggleSurvival(id) {
       if (this.survivors.includes(id)) {
@@ -150,6 +173,7 @@ export default {
 
       store.set('s3-dead', this.dead);
       store.set('s3-fight', this.fighting);
+      this.setJSON();
     },
     nuke() {
       store.remove('s3-dead');
@@ -157,6 +181,16 @@ export default {
       this.dead = [];
       this.fighting = {};
       this.survivors = [];
+      this.setJSON();
+    },
+    setJSON() {
+      this.req.open('PUT', `https://api.jsonbin.io/b/${process.env.VUE_APP_BIN}`, true);
+      this.req.setRequestHeader('Content-type', 'application/json');
+      this.req.setRequestHeader('secret-key', process.env.VUE_APP_KEY);
+      this.req.send(JSON.stringify({
+        dead: this.dead,
+        fighting: this.fighting,
+      }));
     },
   },
 };
