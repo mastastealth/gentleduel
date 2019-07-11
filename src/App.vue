@@ -187,6 +187,7 @@ export default {
       this.req.open('PUT', `https://api.jsonbin.io/b/${process.env.VUE_APP_BIN}`, true);
       this.req.setRequestHeader('Content-type', 'application/json');
       this.req.setRequestHeader('secret-key', process.env.VUE_APP_KEY);
+      this.req.setRequestHeader('versioning', false);
       this.req.send(JSON.stringify({
         dead: this.dead,
         fighting: this.fighting,
