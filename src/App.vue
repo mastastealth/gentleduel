@@ -116,6 +116,7 @@ export default {
         'Pile',
         'Split',
         'Spider',
+        'Bloocoon',
       ],
       dead: [],
       fighting: {},
@@ -286,6 +287,7 @@ h2 {
 
   &[data-id="arilou"] { background: url('./assets/player/Arilou.png') no-repeat; }
   &[data-id="child"] { background: url('./assets/player/child.png') no-repeat; }
+  &[data-id="bloocoon"] { background: url('./assets/player/bloocoon.png') no-repeat; }
   &[data-id="dino"] { background: url('./assets/player/dino.png') no-repeat; }
   &[data-id="duchu"] { background: url('./assets/player/Duchu.png') no-repeat; }
   &[data-id="dzon"] { background: url('./assets/player/Dzon.png') no-repeat; }
