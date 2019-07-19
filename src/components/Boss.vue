@@ -172,6 +172,26 @@ export default {
     height: 48px;
     transition: filter 0.3s, transform 0.3s;
     width: 48px;
+
+    &:hover {
+      z-index: 1;
+    }
+
+    &:hover:before {
+      background: rgba(0,0,0,0.75);
+      box-shadow: 0 0 0 5px rgba(0,0,0,0.75);
+      color: white;
+      content: attr(data-id);
+      font-size: 10px;
+      font-weight: bold;
+      opacity: 1;
+      position: absolute;
+      bottom: 130%; left: -10%;
+      text-align: center;
+      text-transform: capitalize;
+      transform: none;
+      width: 120%;
+    }
   }
 
   .kills {
@@ -189,6 +209,10 @@ export default {
         border: 3px solid darkred;
         filter: grayscale(30%);
         transform: none;
+      }
+
+      &:hover:before {
+        transform: rotateZ(180deg);
       }
     }
   }
