@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <span class="trash" @dblclick="nuke"></span>
+    <!-- span class="trash" @dblclick="nuke"></span -->
 
     <section class="bosses">
       <!-- <h2>The Bosses</h2> -->
